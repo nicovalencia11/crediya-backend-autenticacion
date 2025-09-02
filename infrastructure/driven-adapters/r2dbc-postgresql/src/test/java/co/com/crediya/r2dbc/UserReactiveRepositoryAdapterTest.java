@@ -2,6 +2,8 @@ package co.com.crediya.r2dbc;
 
 import co.com.crediya.model.user.User;
 import co.com.crediya.r2dbc.entity.UserEntity;
+import co.com.crediya.r2dbc.repository.UserReactiveRepository;
+import co.com.crediya.r2dbc.repository.UserReactiveRepositoryAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

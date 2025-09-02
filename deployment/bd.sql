@@ -17,6 +17,7 @@ CREATE TABLE usuario (
      documento_identidad VARCHAR(50) NOT NULL,
      direccion VARCHAR(150) NOT NULL,
      telefono VARCHAR(20) NOT NULL,
+     contrasena VARCHAR(250) NOT NULL,
      correo_electronico VARCHAR(100) NOT NULL UNIQUE,
      id_rol INT NULL,
      salario_base NUMERIC(15,2) NOT NULL,
@@ -28,3 +29,15 @@ CREATE TABLE usuario (
 INSERT INTO rol (nombre, descripcion) VALUES
     ('ADMIN', 'Administrador del sistema'),
     ('USER', 'Usuario estándar solicitante de crédito');
+
+-- ************************************************************************
+-- ************************************************************************
+-- ************************************************************************
+-- ************************************************************************
+-- ************************************************************************
+
+-- =====================================
+-- INCREMENTALES EN TABLA USUARIO
+-- =====================================
+ALTER TABLE usuario
+    ADD COLUMN contrasena VARCHAR(250) NOT NULL;

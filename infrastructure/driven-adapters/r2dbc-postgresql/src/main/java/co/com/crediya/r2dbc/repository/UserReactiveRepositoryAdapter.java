@@ -1,4 +1,4 @@
-package co.com.crediya.r2dbc;
+package co.com.crediya.r2dbc.repository;
 
 import co.com.crediya.model.exceptions.TechnicalException;
 import co.com.crediya.model.responsecode.ResponseCode;

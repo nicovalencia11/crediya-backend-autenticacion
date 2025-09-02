@@ -42,6 +42,9 @@ public class UserEntity {
     @Column("telefono")
     private String phone;
 
+    @Column("contrasena")
+    private String password;
+
     @Column("id_rol")
     private Long idRole;
 

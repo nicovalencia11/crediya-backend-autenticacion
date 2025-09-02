@@ -36,6 +36,12 @@ public class UserRequest {
     @NotBlank(message = "address is required")
     private String address;
 
+    @NotBlank(message = "password is required")
+    private String password;
+
+    @NotBlank(message = "idRole is required")
+    private Long idRole;
+
     @NotBlank(message = "phone is required")
     private String phone;
 
