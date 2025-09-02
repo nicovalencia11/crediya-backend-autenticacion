@@ -18,8 +18,8 @@ public class OpenApiDoc {
     private static final String MEDIA_TYPE_APPLICATION_JSON = "application/json";
     private static final String TAG_USER = "USUARIO";
 
-    public Builder createUser(Builder builder) {
-        return builder.operationId("createUser")
+    public void createUser(Builder builder) {
+        builder.operationId("createUser")
                 .description("Created a new user")
                 .requestBody(
                         requestBodyBuilder()
@@ -43,8 +43,8 @@ public class OpenApiDoc {
                 .tag(TAG_USER);
     }
 
-    public Builder getUserByIdentification(Builder builder){
-        return builder.operationId("getUserByIdentification")
+    public void getUserByIdentification(Builder builder){
+        builder.operationId("getUserByIdentification")
                 .description("Return a user by identification")
                 .parameter(parameterBuilder()
                         .name("Id")

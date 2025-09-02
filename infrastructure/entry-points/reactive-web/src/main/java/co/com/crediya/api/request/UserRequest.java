@@ -40,8 +40,8 @@ public class UserRequest {
     private String phone;
 
     @NotNull(message = "base salary is required")
-    @DecimalMin(value = "0.0", inclusive = true, message = "base salary must be >= 0")
-    @DecimalMax(value = "15000000.0", inclusive = true, message = "base salary must be <= 15000000")
+    @DecimalMin(value = "0.0", message = "base salary must be >= 0")
+    @DecimalMax(value = "15000000.0", message = "base salary must be <= 15000000")
     private BigDecimal salaryBase;
 
 }
