@@ -1,0 +1,67 @@
+package co.com.crediya.api.exceptions;
+
+import co.com.crediya.api.response.ApiResponse;
+import co.com.crediya.model.exceptions.BusinessException;
+import co.com.crediya.model.exceptions.TechnicalException;
+import co.com.crediya.model.responsecode.ResponseCode;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
+import org.springframework.boot.web.reactive.error.ErrorAttributes;
+import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.*;
+import reactor.core.publisher.Mono;
+
+@Slf4j
+@Component
+public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
+
+    public GlobalExceptionHandler(ErrorAttributes errorAttributes, WebProperties.Resources resources, ApplicationContext applicationContext, ServerCodecConfigurer serverCodecConfigurer) {
+        super(errorAttributes, resources, applicationContext);
+        this.setMessageReaders(serverCodecConfigurer.getReaders());
+        this.setMessageWriters(serverCodecConfigurer.getWriters());
+
+    }
+
+    @Override
+    protected RouterFunction<ServerResponse> getRoutingFunction(ErrorAttributes errorAttributes) {
+        return RouterFunctions.route(RequestPredicates.all(), this::customErrorResponse);
+    }
+
+    private Mono<ServerResponse> customErrorResponse(ServerRequest request) {
+        Throwable error = getError(request);
+        log.error("MESSAGE_EXCEPTION_LOG_TRACE : Handling exception - {}", error.toString());
+
+        HttpStatus status;
+        String code = ResponseCode.TECHNICAL_ERROR;
+        Object data = null;
+
+        if (error instanceof BusinessException businessException) {
+            status = HttpStatus.BAD_REQUEST;
+            code = businessException.getCode();
+        } else if (error instanceof TechnicalException technicalException) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            code = technicalException.getCode();
+        } else if (error instanceof ValidationException validationException) {
+            status = HttpStatus.BAD_REQUEST;
+            code = validationException.getCode();
+            data = error.getMessage();
+        }else {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        ApiResponse<Object> errorResponse = ApiResponse.builder()
+                .code(code)
+                .data(data)
+                .build();
+
+        return ServerResponse
+                .status(status)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(errorResponse);
+    }
+}
