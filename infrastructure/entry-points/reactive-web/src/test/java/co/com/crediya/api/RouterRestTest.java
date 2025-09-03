@@ -122,7 +122,7 @@ class RouterRestTest {
     @Test
     void testPOSTCreateUser_ErrorInUseCase() {
         given(saveUserUseCase.execute(any()))
-                .willReturn(Mono.error(new BusinessException("Error mock")));
+                .willReturn(Mono.error(new BusinessException("Error mock", "Error mock")));
         webTestClient.post()
                 .uri("/v1/user")
                 .contentType(MediaType.APPLICATION_JSON)

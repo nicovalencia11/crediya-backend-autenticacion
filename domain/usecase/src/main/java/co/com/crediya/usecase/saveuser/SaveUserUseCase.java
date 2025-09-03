@@ -16,7 +16,7 @@ public class SaveUserUseCase {
         return userRepository.findByEmail(user.getEmail())
                 .hasElement()
                 .flatMap(emailExists -> emailExists
-                        ? Mono.error(new BusinessException(ResponseCode.DUPLICATE_EMAIL))
+                        ? Mono.error(new BusinessException(ResponseCode.DUPLICATE_EMAIL, ResponseCode.MESSAGE_DUPLICATE_EMAIL))
                         : userRepository.save(user));
     }
 

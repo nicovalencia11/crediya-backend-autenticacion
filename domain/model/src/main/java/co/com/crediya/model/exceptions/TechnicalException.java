@@ -6,9 +6,11 @@ import lombok.Getter;
 public class TechnicalException extends RuntimeException {
 
     private final String code;
+    private final String message;
 
-    public TechnicalException(String code) {
+    public TechnicalException(String code, String message) {
         this.code = code;
+        this.message = message;
     }
 
 }

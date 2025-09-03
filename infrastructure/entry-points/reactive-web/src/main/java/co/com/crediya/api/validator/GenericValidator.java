@@ -8,6 +8,8 @@ import jakarta.validation.Validator;
 import lombok.experimental.UtilityClass;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,13 +22,15 @@ public class GenericValidator {
         Set<ConstraintViolation<T>> violations = validator.validate(object);
         return violations.isEmpty()
                 ? Mono.just(object)
-                : Mono.error(new ValidationException("Validation errors: " + formatErrors(violations), ResponseCode.DATA_CORRUPTED));
+                : Mono.error(new ValidationException(formatErrors(violations), ResponseCode.DATA_CORRUPTED, ResponseCode.MESSAGE_DATA_CORRUPTED));
     }
 
-    private static <T> String formatErrors(Set<ConstraintViolation<T>> violations) {
-        return violations.stream()
+    private static <T> Map<String, List<String>> formatErrors(Set<ConstraintViolation<T>> violations) {
+        List<String> errors = violations.stream()
                 .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining(", "));
+                .toList();
+        return Map.of("errors", errors);
     }
+
 
 }

@@ -30,7 +30,7 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations
         return super.save(user)
                 .doOnSuccess(saved -> log.info("MESSAGE_ADAPTER_LOG_TRACE : User saved email={}", saved.getEmail()))
                 .doOnError(err -> log.error("MESSAGE_ADAPTER_LOG_TRACE : DB error while saving user email={} - {}", user.getEmail(), err.getMessage()))
-                .onErrorMap(throwable -> new TechnicalException(ResponseCode.DATA_BASE_FAILED))
+                .onErrorMap(throwable -> new TechnicalException(ResponseCode.DATA_BASE_FAILED, ResponseCode.MESSAGE_DATA_BASE_FAILED))
                 .as(transactionalOperator::transactional);
     }
 
@@ -48,7 +48,7 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations
                 .map(this::toEntity)
                 .onErrorMap(throwable -> {
                     log.error("MESSAGE_ADAPTER_LOG_TRACE : DB error while searching user email={} - {}", email, throwable.getMessage());
-                    return new TechnicalException(ResponseCode.DATA_BASE_FAILED);
+                    return new TechnicalException(ResponseCode.DATA_BASE_FAILED, ResponseCode.MESSAGE_DATA_BASE_FAILED);
                 });
     }
 
@@ -66,7 +66,7 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations
                 .map(this::toEntity)
                 .onErrorMap(throwable -> {
                     log.error("MESSAGE_ADAPTER_R2DBC_LOG_TRACE : DB error while finding user by identification ={} - {}",identification, throwable.getMessage());
-                    return new TechnicalException(ResponseCode.DATA_BASE_FAILED);
+                    return new TechnicalException(ResponseCode.DATA_BASE_FAILED, ResponseCode.MESSAGE_DATA_BASE_FAILED);
                 });
     }
 }

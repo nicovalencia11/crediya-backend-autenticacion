@@ -33,7 +33,7 @@ public class UserHandler {
                     return saveUserUseCase.execute(user)
                             .doOnSuccess(u -> log.info("MESSAGE_HANDLER_LOG_TRACE : Successfully created user with id={}", u.getId()))
                             .doOnError(err -> log.error("MESSAGE_HANDLER_LOG_TRACE : Error while creating user with email={} - {}", user.getEmail(), err.getMessage()))
-                            .flatMap(savedUser -> buildResponse(savedUser, HttpStatus.CREATED.value(), ResponseCode.USER_CREATED_SUCCESSFULLY));
+                            .flatMap(savedUser -> buildResponse(savedUser, HttpStatus.CREATED.value(), ResponseCode.USER_CREATED_SUCCESSFULLY, ResponseCode.MESSAGE_SUCCESSFULLY_CREATED));
                 });
     }
 
@@ -43,15 +43,16 @@ public class UserHandler {
         return filterUserByIdentificationUseCase.execute(identification)
                 .doOnSuccess(user -> log.info("MESSAGE_HANDLER_LOG_TRACE : User found with identification={}", identification))
                 .doOnError(err -> log.error("MESSAGE_HANDLER_LOG_TRACE : Error searching user with identification={} - {}", identification, err.getMessage()))
-                .flatMap(user -> buildResponse(user, HttpStatus.OK.value(), ResponseCode.USER_FILTERED_SUCCESSFULLY))
-                .switchIfEmpty(buildResponse(null, HttpStatus.NOT_FOUND.value(), ResponseCode.USER_NOT_EXISTS));
+                .flatMap(user -> buildResponse(user, HttpStatus.OK.value(), ResponseCode.USER_FILTERED_SUCCESSFULLY, ResponseCode.MESSAGE_SUCCESSFULLY_FILTERED))
+                .switchIfEmpty(buildResponse(null, HttpStatus.NOT_FOUND.value(), ResponseCode.USER_NOT_EXISTS, ResponseCode.MESSAGE_USER_NOT_EXISTS));
     }
 
-    private <T> Mono<ServerResponse> buildResponse(T data, int status, String message) {
+    private <T> Mono<ServerResponse> buildResponse(T data, int status, String code, String message) {
         return ServerResponse.status(status).bodyValue(
                 ApiResponse.<T>builder()
                         .data(data)
-                        .code(message)
+                        .code(code)
+                        .message(message)
                         .build()
         );
     }

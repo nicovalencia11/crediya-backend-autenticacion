@@ -38,25 +38,31 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
         HttpStatus status;
         String code = ResponseCode.TECHNICAL_ERROR;
+        String message;
         Object data = null;
 
         if (error instanceof BusinessException businessException) {
             status = HttpStatus.BAD_REQUEST;
             code = businessException.getCode();
+            message = businessException.getMessage();
         } else if (error instanceof TechnicalException technicalException) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             code = technicalException.getCode();
+            message = technicalException.getMessage();
         } else if (error instanceof ValidationException validationException) {
             status = HttpStatus.BAD_REQUEST;
             code = validationException.getCode();
-            data = error.getMessage();
+            data = validationException.getData();
+            message = validationException.getMessage();
         }else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
+            message = ResponseCode.MESSAGE_TECHNICAL_ERROR;
         }
 
         ApiResponse<Object> errorResponse = ApiResponse.builder()
                 .code(code)
                 .data(data)
+                .message(message)
                 .build();
 
         return ServerResponse
