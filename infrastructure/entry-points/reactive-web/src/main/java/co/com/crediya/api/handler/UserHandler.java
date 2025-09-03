@@ -1,4 +1,4 @@
-package co.com.crediya.api;
+package co.com.crediya.api.handler;
 
 import co.com.crediya.api.mapper.UserRequestMapper;
 import co.com.crediya.api.request.UserRequest;
@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class Handler {
+public class UserHandler {
 
     private final SaveUserUseCase saveUserUseCase;
     private final FilterUserByIdentificationUseCase filterUserByIdentificationUseCase;

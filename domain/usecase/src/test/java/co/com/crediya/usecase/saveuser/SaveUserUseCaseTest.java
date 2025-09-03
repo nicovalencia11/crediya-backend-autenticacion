@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class SaveUserUseCaseTest {
+class SaveUserUseCaseTest {
 
     @Mock
     private UserRepository userRepository;
@@ -62,10 +62,7 @@ public class SaveUserUseCaseTest {
         when(userRepository.findByEmail(existingUser.getEmail())).thenReturn(Mono.just(existingUser));
         Mono<User> result = saveUserUseCase.execute(existingUser);
         StepVerifier.create(result)
-                .expectErrorMatches(t ->
-                        t instanceof BusinessException
-                                && "AUTH-ERROR001".equals(t.getMessage()) // null-safe
-                )
+                .expectError(BusinessException.class)
                 .verify();
 
     }

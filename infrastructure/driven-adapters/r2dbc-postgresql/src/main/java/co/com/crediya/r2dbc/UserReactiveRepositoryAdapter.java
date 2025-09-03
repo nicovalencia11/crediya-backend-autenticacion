@@ -9,7 +9,7 @@ import co.com.crediya.r2dbc.helper.ReactiveAdapterOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -17,18 +17,21 @@ import reactor.core.publisher.Mono;
 public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations
         <User, UserEntity, Long, UserReactiveRepository> implements UserRepository {
 
-    public UserReactiveRepositoryAdapter(UserReactiveRepository repository, ObjectMapper mapper) {
+    private final TransactionalOperator transactionalOperator;
+
+    public UserReactiveRepositoryAdapter(UserReactiveRepository repository, ObjectMapper mapper, TransactionalOperator transactionalOperator) {
         super(repository, mapper, d -> mapper.map(d, User.class));
+        this.transactionalOperator = transactionalOperator;
     }
 
     @Override
-    @Transactional
     public Mono<User> save(User user) {
         log.debug("MESSAGE_ADAPTER_LOG_TRACE: INIT save user email={}", user.getEmail());
         return super.save(user)
                 .doOnSuccess(saved -> log.info("MESSAGE_ADAPTER_LOG_TRACE : User saved email={}", saved.getEmail()))
                 .doOnError(err -> log.error("MESSAGE_ADAPTER_LOG_TRACE : DB error while saving user email={} - {}", user.getEmail(), err.getMessage()))
-                .onErrorMap(throwable -> new TechnicalException(ResponseCode.DATA_BASE_FAILED));
+                .onErrorMap(throwable -> new TechnicalException(ResponseCode.DATA_BASE_FAILED))
+                .as(transactionalOperator::transactional);
     }
 
     @Override

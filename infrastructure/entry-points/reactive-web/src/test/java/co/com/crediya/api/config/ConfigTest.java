@@ -1,26 +1,52 @@
 package co.com.crediya.api.config;
 
-import co.com.crediya.api.Handler;
 import co.com.crediya.api.RouterRest;
+import co.com.crediya.api.handler.UserHandler;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
 
-@ContextConfiguration(classes = {RouterRest.class, Handler.class})
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 @WebFluxTest
-@Import({CorsConfig.class, SecurityHeadersConfig.class})
+@Import({RouterRest.class, CorsConfig.class, SecurityHeadersConfig.class})
 class ConfigTest {
+
+    @SpringBootConfiguration
+    static class TestBootConfig {
+    }
 
     @Autowired
     private WebTestClient webTestClient;
 
+    @MockitoBean
+    private UserHandler userHandler;
+
+    @BeforeEach
+    void setUpRoutes() {
+        when(userHandler.listenGETFilteredUserByIdentificationUseCase(any(ServerRequest.class)))
+                .thenAnswer(inv -> ServerResponse.ok()
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .bodyValue("ok"));
+        when(userHandler.listenPOSTCreateUserUseCase(any(ServerRequest.class)))
+                .thenAnswer(inv -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue("{\"status\":\"ok\"}"));
+    }
+
     @Test
-    void corsConfigurationShouldAllowOrigins() {
+    void corsAndSecurityHeaders_areApplied() {
         webTestClient.get()
-                .uri("/api/usecase/path")
+                .uri("/v1/user/123")
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().valueEquals("Content-Security-Policy",
@@ -32,5 +58,4 @@ class ConfigTest {
                 .expectHeader().valueEquals("Pragma", "no-cache")
                 .expectHeader().valueEquals("Referrer-Policy", "strict-origin-when-cross-origin");
     }
-
 }
