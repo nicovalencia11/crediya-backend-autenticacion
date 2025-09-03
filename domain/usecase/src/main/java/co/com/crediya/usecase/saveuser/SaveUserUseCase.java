@@ -17,14 +17,7 @@ public class SaveUserUseCase {
                 .hasElement()
                 .flatMap(emailExists -> emailExists
                         ? Mono.error(new BusinessException(ResponseCode.DUPLICATE_EMAIL))
-                        : Mono.just(user))
-                .flatMap(userValidateWithoutEmail -> userRepository.findByDocumentNumber(userValidateWithoutEmail.getDocumentNumber())
-                        .hasElement()
-                        .flatMap(idExists -> idExists
-                                ? Mono.error(new BusinessException(ResponseCode.DUPLICATE_IDENTIFICATION))
-                                : userRepository.save(userValidateWithoutEmail)
-                        )
-                );
+                        : userRepository.save(user));
     }
 
 }

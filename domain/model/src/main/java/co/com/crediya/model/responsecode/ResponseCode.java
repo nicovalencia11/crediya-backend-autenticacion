@@ -8,7 +8,7 @@ public class ResponseCode {
     public static final String USER_FILTERED_SUCCESSFULLY = "AUTH-SUCCESS002";
 
     public static final String DUPLICATE_EMAIL = "AUTH-ERROR001";
-    public static final String DUPLICATE_IDENTIFICATION = "AUTH-ERROR002";
+    //public static final String DUPLICATE_IDENTIFICATION = "AUTH-ERROR002";
     public static final String USER_NOT_EXISTS = "AUTH-ERROR003";
     public static final String TECHNICAL_ERROR = "AUTH-ERROR004";
     public static final String DATA_CORRUPTED = "AUTH-ERROR005";

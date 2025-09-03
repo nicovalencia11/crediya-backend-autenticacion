@@ -1,5 +1,6 @@
 package co.com.crediya.api;
 
+import co.com.crediya.api.handler.UserHandler;
 import co.com.crediya.api.openapidoc.OpenApiDoc;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.context.annotation.Bean;
@@ -20,13 +21,13 @@ public class RouterRest {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> routerFunction(Handler handler) {
+    public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler) {
         return route()
                 .POST(BASE_PATH_USER,
-                        handler::listenPOSTCreateUserUseCase,
+                        userHandler::listenPOSTCreateUserUseCase,
                         OpenApiDoc::createUser)
                 .GET(BASE_PATH_USER + "/{identification}",
-                        handler::listenGETFilteredUserByIdentificationUseCase,
+                        userHandler::listenGETFilteredUserByIdentificationUseCase,
                         OpenApiDoc::getUserByIdentification)
                 .build();
     }
